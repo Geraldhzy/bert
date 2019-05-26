@@ -82,7 +82,7 @@ def create_model(is_training, input_ids, input_mask, segment_ids, labels,
 
     #contrastive loss
     m = 0.3
-    probabilities = tf.nn.sigmoid(logits, axis=-1)
+    probabilities = tf.nn.sigmoid(logits)
     per_example_loss = 0.5*labels * (tf.square(1-probabilities)) + (1.0 - labels) * (tf.square(probabilities)) * tf.maximum(0.0, probabilities-m)
     loss = tf.reduce_mean(per_example_loss)
 
