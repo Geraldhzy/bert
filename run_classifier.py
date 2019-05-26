@@ -203,6 +203,41 @@ class DataProcessor(object):
         lines.append(line)
       return lines
 
+class HdeProcessor(DataProcessor):
+  """Base class for data converters for sequence classification data sets."""
+  def read_txt(self, file_path):
+    with open(file_path, 'r') as f:
+        reader = f.readlines()
+    examples = []
+    for index, line in enumerate(reader):
+      guid = 'train-%d'%index
+      split_line = line.strip().split('\t')
+      text_a = tokenization.convert_to_unicode(split_line[1])
+      text_b = tokenization.convert_to_unicode(split_line[2])
+      label = split_line[0]
+      examples.append(InputExample(guid=guid, text_a=text_a,
+                                   text_b=text_b, label=label))
+    return examples
+
+  def get_train_examples(self, data_dir):
+    """Gets a collection of `InputExample`s for the train set."""
+    file_path = os.path.join(data_dir, 'trn_label_title.txt')
+    return self.read_txt(file_path)
+
+  def get_dev_examples(self, data_dir):
+    """Gets a collection of `InputExample`s for the dev set."""
+    file_path = os.path.join(data_dir, 'dev_label_title.txt')
+    return self.read_txt(file_path)
+
+  def get_test_examples(self, data_dir):
+    """Gets a collection of `InputExample`s for prediction."""
+    file_path = os.path.join(data_dir, 'test_label_title.txt')
+    return self.read_txt(file_path)
+
+  def get_labels(self):
+    """Gets the list of labels for this data set."""
+    return ['0','1']
+
 
 class XnliProcessor(DataProcessor):
   """Processor for the XNLI data set."""
